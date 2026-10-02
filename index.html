@@ -39,6 +39,7 @@ dialog{border:1px solid var(--line);border-radius:8px;background:var(--panel);co
 <div class="row" style="margin-top:10px"><button class="p" id="addBtn">Add account</button><button id="loginAll">Log in selected</button></div></section>
 <section><h2>Connection</h2>
 <label>Proxy URL (optional, see README)</label><input id="proxy" placeholder="https://your-static-ip-proxy.example.com">
+<label>neo-fin-key header (leave blank unless Kotak asks for it)</label><input id="fin" placeholder="blank">
 <label>Login host</label><input id="host" value="https://mis.kotaksecurities.com">
 </section></div>
 <div>
@@ -88,19 +89,19 @@ async function totp(secret){const k=await crypto.subtle.importKey("raw",b32(secr
  const n=((h[o]&127)<<24|h[o+1]<<16|h[o+2]<<8|h[o+3])%1e6;return String(n).padStart(6,"0");}
 
 /* ---------- API ---------- */
-const FIN="neotradeapi";
+const fin=()=>{const v=$("fin").value.trim();return v?{"neo-fin-key":v}:{}};
 function url(u){const p=$("proxy").value.trim().replace(/\/$/,"");return p?p+"/?target="+encodeURIComponent(u):u;}
 async function call(u,opt){const r=await fetch(url(u),opt);const t=await r.text();let j;try{j=JSON.parse(t)}catch{j={raw:t}}
  if(!r.ok)throw new Error("HTTP "+r.status+" "+t.slice(0,200));return j;}
 async function login(a){
  const code=await totp(a.totp);
- const h={"Authorization":a.ck,"neo-fin-key":FIN,"Content-Type":"application/json"};
+ const h={"Authorization":a.ck,...fin(),"Content-Type":"application/json"};
  const l=await call($("host").value+"/login/1.0/tradeApiLogin",{method:"POST",headers:h,body:JSON.stringify({mobileNumber:a.mobile,ucc:a.ucc,totp:code})});
  const d=l.data||{}; if(!d.token)throw new Error("Login failed: "+JSON.stringify(l).slice(0,200));
  const v=await call($("host").value+"/login/1.0/tradeApiValidate",{method:"POST",headers:{...h,sid:d.sid,Auth:d.token},body:JSON.stringify({mpin:a.mpin})});
  const e=v.data||{}; if(!e.token)throw new Error("MPIN validation failed: "+JSON.stringify(v).slice(0,200));
  sess[a.id]={token:e.token,sid:e.sid,baseUrl:e.baseUrl};}
-function authH(s,form){return {Auth:s.token,Sid:s.sid,"neo-fin-key":FIN,"Content-Type":form?"application/x-www-form-urlencoded":"application/json"};}
+function authH(s,form){return {Auth:s.token,Sid:s.sid,...fin(),"Content-Type":form?"application/x-www-form-urlencoded":"application/json"};}
 async function place(a,side){
  const mkt=$("pt").value==="MKT"||$("pt").value==="SL-M";
  const jd={am:"NO",dq:"0",es:$("seg").value,mp:"0",pc:$("prod").value,pf:"N",pr:mkt?"0":String($("price").value||"0"),
@@ -138,7 +139,7 @@ async function send(side){
  fan(a=>place(a,side),$("log"));}
 $("buyBtn").onclick=()=>send("B");$("sellBtn").onclick=()=>send("S");
 $("obBtn").onclick=()=>fan(a=>fetchData(a,"ob"),$("data"));$("posBtn").onclick=()=>fan(a=>fetchData(a,"pos"),$("data"));
-for(const k of["proxy","host"]){if(localStorage["s_"+k])$(k).value=localStorage["s_"+k];$(k).onchange=()=>localStorage["s_"+k]=$(k).value;}
+for(const k of["proxy","host","fin"]){if(localStorage["s_"+k])$(k).value=localStorage["s_"+k];$(k).onchange=()=>localStorage["s_"+k]=$(k).value;}
 render();
 </script>
 </body>
