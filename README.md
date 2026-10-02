@@ -10,6 +10,9 @@ Everything runs in your browser. There is no server and nothing is sent anywhere
 - Order book and positions per account
 - Dry-run mode, on by default
 
+## First use
+Click **Unlock vault** and type any passphrase you choose; that creates the vault. Use the same one next time. If you forget it, clear this site's browser storage and re-add your accounts.
+
 ## Deploy
 1. Create a repo, push these files to `main`.
 2. Settings → Pages → Source → **GitHub Actions** (uses `.github/workflows/pages.yml`). Alternatively choose "Deploy from branch" → `main` / root and delete the workflow.
