@@ -115,7 +115,7 @@ async function fetchData(a,kind){const s=sess[a.id];
 const picked=()=>accounts.filter(a=>$("c_"+a.id)?.checked);
 function render(){ $("unlockBtn").textContent=vaultKey?"Vault unlocked":"Unlock vault";
  $("accts").innerHTML=accounts.length?accounts.map(a=>`<div class="acct"><input type="checkbox" id="c_${a.id}" aria-label="Select ${esc(a.label)}"><span class="dot ${sess[a.id]?"on":""}"></span><span class="n">${esc(a.label)} <small style="color:var(--mute)">${esc(a.ucc)}</small></span><button data-lg="${a.id}">Log in</button><button data-rm="${a.id}">Remove</button></div>`).join(""):'<p style="color:var(--mute)">No accounts yet.</p>';}
-function ask(html){return new Promise(res=>{$("dform").innerHTML=html+'<div class="row" style="margin-top:12px"><button value="cancel">Cancel</button><button class="p" value="ok">OK</button></div>';
+function ask(html){return new Promise(res=>{$("dform").innerHTML=html+'<div class="row" style="margin-top:12px;flex-direction:row-reverse"><button class="p" value="ok">OK</button><button value="cancel" formnovalidate>Cancel</button></div>';
  $("dlg").onclose=()=>res($("dlg").returnValue==="ok");$("dlg").showModal();});}
 $("unlockBtn").onclick=async()=>{ if(vaultKey)return;
  if(await ask('<h2>'+(localStorage.vault?'Unlock vault':'Create vault passphrase')+'</h2><label>Passphrase</label><input id="pp" type="password" autocomplete="off">'))
