@@ -39,6 +39,7 @@ dialog{border:1px solid var(--line);border-radius:8px;background:var(--panel);co
 <div class="row" style="margin-top:10px"><button class="p" id="addBtn">Add account</button><button id="loginAll">Log in selected</button></div></section>
 <section><h2>Connection</h2>
 <label>Proxy URL (optional, see README)</label><input id="proxy" placeholder="https://your-static-ip-proxy.example.com">
+<div class="row" style="margin-top:8px"><button id="testBtn">Test proxy</button><span id="testOut" style="flex:1"></span></div>
 <label>neo-fin-key header (leave blank unless Kotak asks for it)</label><input id="fin" placeholder="blank">
 <label>Login host</label><input id="host" value="https://mis.kotaksecurities.com">
 </section></div>
@@ -140,6 +141,10 @@ async function send(side){
 $("buyBtn").onclick=()=>send("B");$("sellBtn").onclick=()=>send("S");
 $("obBtn").onclick=()=>fan(a=>fetchData(a,"ob"),$("data"));$("posBtn").onclick=()=>fan(a=>fetchData(a,"pos"),$("data"));
 for(const k of["proxy","host","fin"]){if(localStorage["s_"+k])$(k).value=localStorage["s_"+k];$(k).onchange=()=>localStorage["s_"+k]=$(k).value;}
+$("testBtn").onclick=async()=>{const p=$("proxy").value.trim().replace(/\/$/,"");const o=$("testOut");
+ if(!p){o.textContent="Enter a Proxy URL first.";return;}o.textContent="Testing...";
+ try{const r=await fetch(p+"/health");const j=await r.json();o.className="ok";o.textContent="Works. Whitelist this IP in Kotak: "+j.ip;}
+ catch(e){o.className="err";o.textContent="Failed: check URL, HTTPS and ALLOWED_ORIGIN (see proxy/SETUP.md).";}};
 render();
 </script>
 </body>
