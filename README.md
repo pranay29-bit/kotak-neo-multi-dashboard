@@ -31,3 +31,6 @@ Click **Unlock vault** and type any passphrase you choose; that creates the vaul
 **Endpoints.** Paths follow Kotak's published SDK flow (`/login/1.0/tradeApiLogin`, `/tradeApiValidate`, `{baseUrl}/quick/order/rule/ms/place`). Order book and positions paths are best-effort; confirm against Kotak's REST docs (github.com/Kotak-Neo/Kotak-Neo/docs) and adjust `fetchData()` if needed. Test with one account and 1 quantity first.
 
 Not affiliated with Kotak. Trading is risky; you are responsible for every order sent.
+
+## Proxy
+See `proxy/SETUP.md` to run your own free static-IP proxy (Docker + Caddy HTTPS).
