@@ -45,7 +45,7 @@ dialog{border:1px solid var(--line);border-radius:8px;background:var(--panel);co
 </section></div>
 <div>
 <section><h2>Place order</h2>
-<div class="note">Orders go to every ticked, logged-in account. Check the quantity and symbol before sending.</div>
+<div class="note">Orders go to every ticked, logged-in account, one at a time with a 1 second gap. Check the quantity and symbol before sending.</div>
 <div class="row"><div><label>Segment</label><select id="seg"><option>nse_cm</option><option>nse_fo</option><option>bse_cm</option><option>bse_fo</option><option>cde_fo</option><option>mcx_fo</option></select></div>
 <div><label>Symbol (trading symbol)</label><input id="sym" placeholder="e.g. RELIANCE-EQ"></div></div>
 <div class="row"><div><label>Product</label><select id="prod"><option>MIS</option><option>NRML</option><option>CNC</option></select></div>
@@ -130,14 +130,18 @@ $("accts").onclick=async e=>{const lg=e.target.dataset.lg,rm=e.target.dataset.rm
  if(rm){accounts=accounts.filter(a=>a.id!==rm);delete sess[rm];await saveVault();render();}
  if(lg){const a=accounts.find(x=>x.id===lg);try{await login(a);}catch(err){alert(a.label+": "+err.message)}render();}};
 $("loginAll").onclick=async()=>{for(const a of picked()){try{await login(a)}catch(err){alert(a.label+": "+err.message)}}render();};
-async function fan(fn,target){const sel=picked();if(!sel.length)return alert("Tick at least one account.");
- const out=await Promise.all(sel.map(async a=>{try{if(!sess[a.id]&&!$("dry").checked)throw new Error("not logged in");return {a,ok:true,r:await fn(a)}}catch(e){return {a,ok:false,r:e.message}}}));
- target.innerHTML=out.map(o=>`<details open><summary class="${o.ok?"ok":"err"}">${esc(o.a.label)}: ${o.ok?"ok":"failed"}</summary><pre>${esc(typeof o.r==="string"?o.r:JSON.stringify(o.r,null,1))}</pre></details>`).join("");}
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const row=o=>`<details open><summary class="${o.ok?"ok":"err"}">${esc(o.a.label)}: ${o.ok?"ok":"failed"}</summary><pre>${esc(typeof o.r==="string"?o.r:JSON.stringify(o.r,null,1))}</pre></details>`;
+async function fan(fn,target,delayMs=0){const sel=picked();if(!sel.length)return alert("Tick at least one account.");
+ const run=async a=>{try{if(!sess[a.id]&&!$("dry").checked)throw new Error("not logged in");return {a,ok:true,r:await fn(a)}}catch(e){return {a,ok:false,r:e.message}}};
+ if(!delayMs){target.innerHTML=(await Promise.all(sel.map(run))).map(row).join("");return;}
+ target.innerHTML="";   // sequential: one account at a time, delayMs apart
+ for(let k=0;k<sel.length;k++){if(k)await sleep(delayMs);target.insertAdjacentHTML("beforeend",row(await run(sel[k])));}}
 async function send(side){
  if(!$("sym").value.trim()||!($("qty").value>0))return alert("Enter symbol and quantity.");
  const n=picked().length;if(!n)return alert("Tick at least one account.");
  if(!$("dry").checked&&!confirm(`LIVE: ${side==="B"?"BUY":"SELL"} ${$("qty").value} ${$("sym").value} on ${n} account(s)?`))return;
- fan(a=>place(a,side),$("log"));}
+ fan(a=>place(a,side),$("log"),1000);}
 $("buyBtn").onclick=()=>send("B");$("sellBtn").onclick=()=>send("S");
 $("obBtn").onclick=()=>fan(a=>fetchData(a,"ob"),$("data"));$("posBtn").onclick=()=>fan(a=>fetchData(a,"pos"),$("data"));
 for(const k of["proxy","host","fin"]){if(localStorage["s_"+k])$(k).value=localStorage["s_"+k];$(k).onchange=()=>localStorage["s_"+k]=$(k).value;}
