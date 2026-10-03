@@ -10,12 +10,17 @@ const cors = {
   "Access-Control-Allow-Origin": ORIGIN,
   "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
   "Access-Control-Allow-Headers": "*",
+  "Access-Control-Allow-Private-Network": "true",
   "Vary": "Origin",
 };
 const okHost = h => h === "kotaksecurities.com" || h.endsWith(".kotaksecurities.com");
 
 http.createServer(async (req, res) => {
   if (req.method === "OPTIONS") { res.writeHead(204, cors); return res.end(); }
+  if (req.url === "/health") {   // lets the dashboard show the IP to whitelist
+    try { const ip = (await (await fetch("https://api.ipify.org")).text()).trim(); res.writeHead(200, { ...cors, "Content-Type": "application/json" }); return res.end(JSON.stringify({ ok: true, ip })); }
+    catch (e) { res.writeHead(502, cors); return res.end("health error: " + e.message); }
+  }
   if (req.headers.origin !== ORIGIN) { res.writeHead(403, cors); return res.end("Forbidden origin"); }
   try {
     const target = new URL(new URL(req.url, "http://x").searchParams.get("target"));
