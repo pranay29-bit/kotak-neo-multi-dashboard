@@ -101,17 +101,17 @@ async function login(a){
  const d=l.data||{}; if(!d.token)throw new Error("Login failed: "+JSON.stringify(l).slice(0,200));
  const v=await call($("host").value+"/login/1.0/tradeApiValidate",{method:"POST",headers:{...h,sid:d.sid,Auth:d.token},body:JSON.stringify({mpin:a.mpin})});
  const e=v.data||{}; if(!e.token)throw new Error("MPIN validation failed: "+JSON.stringify(v).slice(0,200));
- sess[a.id]={token:e.token,sid:e.sid,baseUrl:e.baseUrl};}
-function authH(s,form){return {Auth:s.token,Sid:s.sid,...fin(),"Content-Type":form?"application/x-www-form-urlencoded":"application/json"};}
+ sess[a.id]={token:e.token,sid:e.sid,baseUrl:e.baseUrl,serverId:e.hsServerId};}
+function authH(s,form){return form?{Auth:s.token,Sid:s.sid,"Content-Type":"application/x-www-form-urlencoded"}:{Auth:s.token,Sid:s.sid,accept:"application/json"};}
 async function place(a,side){
  const mkt=$("pt").value==="MKT"||$("pt").value==="SL-M";
  const jd={am:"NO",dq:"0",es:$("seg").value,mp:"0",pc:$("prod").value,pf:"N",pr:mkt?"0":String($("price").value||"0"),
-  pt:$("pt").value,qt:String($("qty").value),rt:"DAY",tp:String($("trig").value||"0"),ts:$("sym").value.trim(),tt:side};
+  pt:$("pt").value,os:"NEOTRADEAPI",qt:String($("qty").value),rt:"DAY",tp:String($("trig").value||"0"),ts:$("sym").value.trim(),tt:side};
  if($("dry").checked)return {dryRun:true,jData:jd};
- const s=sess[a.id];return call(s.baseUrl+"/quick/order/rule/ms/place",{method:"POST",headers:authH(s,true),body:"jData="+encodeURIComponent(JSON.stringify(jd))});}
+ const s=sess[a.id];return call(s.baseUrl+"/quick/order/rule/ms/place?sId="+encodeURIComponent(s.serverId),{method:"POST",headers:authH(s,true),body:"jData="+encodeURIComponent(JSON.stringify(jd))});}
 async function fetchData(a,kind){const s=sess[a.id];
  const path=kind==="ob"?"/quick/user/orders":"/quick/user/positions";
- return call(s.baseUrl+path,{method:kind==="ob"?"GET":"POST",headers:authH(s,true),...(kind==="ob"?{}:{body:"jData="+encodeURIComponent("{}")})});}
+ return call(s.baseUrl+path+"?sId="+encodeURIComponent(s.serverId),{method:"GET",headers:authH(s,false)});}
 
 /* ---------- UI ---------- */
 const picked=()=>accounts.filter(a=>$("c_"+a.id)?.checked);
