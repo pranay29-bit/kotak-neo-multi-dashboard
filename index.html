@@ -6,26 +6,36 @@
 <title>Neo Multi-Account Desk</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📈</text></svg>">
 <style>
-:root{--bg:#eef1f5;--panel:#fff;--ink:#17202e;--mute:#667085;--line:#d9dee7;--buy:#0b7d4f;--sell:#c23b30;--accent:#1d4ed8;--warn:#fff4d6}
-@media(prefers-color-scheme:dark){:root{--bg:#141a24;--panel:#1c2431;--ink:#e6ebf3;--mute:#8d99ad;--line:#2d3748;--buy:#3ccf91;--sell:#ff7a6e;--accent:#7aa2ff;--warn:#3a3217}}
-*{box-sizing:border-box}body{margin:0;font:15px/1.5 "IBM Plex Sans",system-ui,sans-serif;background:var(--bg);color:var(--ink)}
-header{padding:14px 20px;border-bottom:1px solid var(--line);background:var(--panel);display:flex;gap:12px;align-items:center;flex-wrap:wrap}
-h1{font-size:18px;margin:0;flex:1}h2{font-size:15px;margin:0 0 10px}
-main{display:grid;grid-template-columns:minmax(300px,380px) 1fr;gap:16px;padding:16px;max-width:1200px;margin:auto}
+:root{--bg:#f4f6fb;--panel:#fff;--ink:#101828;--mute:#667085;--line:#e4e8f0;--buy:#079455;--sell:#d92d20;--accent:#4f46e5;--soft:#eef0ff;--warn:#fff7e0;--sh:0 1px 2px rgba(16,24,40,.06),0 6px 18px rgba(16,24,40,.06)}
+@media(prefers-color-scheme:dark){:root{--bg:#0e1320;--panel:#161d2e;--ink:#e8edf7;--mute:#92a0b8;--line:#263148;--buy:#32d296;--sell:#ff7b70;--accent:#8b93ff;--soft:#222a4a;--warn:#3a3217;--sh:none}}
+*{box-sizing:border-box}body{margin:0;font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink)}
+header{padding:16px 24px;background:linear-gradient(120deg,#4f46e5,#7c3aed);color:#fff;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+header label{color:#fff;margin:0;display:flex;gap:6px;align-items:center}header input{width:auto}
+header button{background:rgba(255,255,255,.18);color:#fff;border-color:transparent}
+h1{font-size:19px;margin:0;flex:1;letter-spacing:-.01em}h2{font-size:12px;margin:0 0 12px;text-transform:uppercase;letter-spacing:.07em;color:var(--mute)}
+main{display:grid;grid-template-columns:minmax(300px,390px) 1fr;gap:18px;padding:18px;max-width:1240px;margin:auto}
 @media(max-width:820px){main{grid-template-columns:1fr}}
-section{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:14px;margin-bottom:16px}
-label{display:block;font-size:13px;color:var(--mute);margin:8px 0 2px}
-input,select,button{font:inherit;padding:7px 9px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink);width:100%}
-button{cursor:pointer;width:auto}button.p{background:var(--accent);color:#fff;border-color:var(--accent)}
-button.buy{background:var(--buy);color:#fff;border-color:var(--buy)}button.sell{background:var(--sell);color:#fff;border-color:var(--sell)}
+section{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:18px;box-shadow:var(--sh)}
+label{display:block;font-size:12px;color:var(--mute);margin:10px 0 3px}
+input,select,button{font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);width:100%}
+button{cursor:pointer;width:auto;transition:filter .15s}button:hover{filter:brightness(.95)}
+button.p{background:var(--accent);color:#fff;border-color:var(--accent)}
+button.buy,button.sell{color:#fff;font-weight:700;padding:11px 20px;flex:1}button.buy{background:var(--buy);border-color:var(--buy)}button.sell{background:var(--sell);border-color:var(--sell)}
 button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
-.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.row>*{flex:1}.row>button{flex:0 0 auto}
-.acct{display:flex;gap:8px;align-items:center;padding:7px 0;border-top:1px solid var(--line)}
-.acct input[type=checkbox]{width:auto}.acct .n{flex:1}.dot{width:9px;height:9px;border-radius:50%;background:var(--mute)}.dot.on{background:var(--buy)}
-.note{background:var(--warn);border-radius:6px;padding:8px 10px;font-size:13px;margin-bottom:10px}
-table{width:100%;border-collapse:collapse;font-size:13px}td,th{padding:5px 6px;border-bottom:1px solid var(--line);text-align:left}
-.ok{color:var(--buy)}.err{color:var(--sell)}pre{white-space:pre-wrap;word-break:break-word;font-size:12px;margin:0}
-dialog{border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);max-width:420px;width:92%}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.row>*{flex:1}.row>button{flex:0 0 auto}.row>button.buy,.row>button.sell{flex:1}
+.hd{justify-content:space-between}.hd h2{margin:0}.all{display:flex;gap:6px;align-items:center;margin:0;color:var(--ink);font-size:13px;flex:0 0 auto}.all input{width:auto}
+.acct{display:flex;gap:8px;align-items:center;padding:9px 10px;margin-top:8px;border:1px solid var(--line);border-radius:10px}
+.acct input[type=checkbox]{width:auto}.acct .n{flex:1;font-weight:600}.acct small{font-weight:400}.dot{width:9px;height:9px;border-radius:50%;background:var(--mute)}.dot.on{background:var(--buy);box-shadow:0 0 0 3px rgba(7,148,85,.2)}
+.note{background:var(--warn);border-radius:8px;padding:8px 10px;font-size:13px;margin-bottom:10px}
+.oc{border:1px solid var(--line);border-left:4px solid var(--mute);border-radius:10px;padding:10px 12px;margin-bottom:10px}.oc.good{border-left-color:var(--buy)}.oc.bad{border-left-color:var(--sell)}.oc.dry{border-left-color:#f79009}
+.oh{display:flex;justify-content:space-between;align-items:center;gap:8px}.os{color:var(--mute);font-size:13px;margin-top:2px;word-break:break-word}
+.pill{font-size:11px;font-weight:700;padding:2px 9px;border-radius:99px;background:var(--soft);white-space:nowrap}.pill.good{background:rgba(7,148,85,.14);color:var(--buy)}.pill.bad{background:rgba(217,45,32,.14);color:var(--sell)}.pill.dry{background:rgba(247,144,9,.16);color:#b54708}
+.side{font-weight:700}.side.b,.up{color:var(--buy)}.side.s,.dn{color:var(--sell)}
+.kp{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}.kp div{background:var(--soft);border-radius:8px;padding:6px 12px;font-size:12px;color:var(--mute)}.kp b{display:block;font-size:16px;color:var(--ink)}
+.tw{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:13px}td,th{padding:6px 8px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
+th{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--mute)}.n{text-align:right;font-variant-numeric:tabular-nums}
+details{margin-top:6px;font-size:12px}summary{cursor:pointer;color:var(--mute)}pre{white-space:pre-wrap;word-break:break-word;font-size:12px;margin:4px 0 0}
+dialog{border:1px solid var(--line);border-radius:14px;background:var(--panel);color:var(--ink);max-width:420px;width:92%}
 </style>
 </head>
 <body>
@@ -34,7 +44,7 @@ dialog{border:1px solid var(--line);border-radius:8px;background:var(--panel);co
 <button id="unlockBtn">Unlock vault</button></header>
 <main>
 <div>
-<section><h2>Accounts</h2>
+<section><div class="row hd"><h2>Accounts</h2><label class="all"><input type="checkbox" id="all"> Select all</label></div>
 <div id="accts"><p style="color:var(--mute)">Unlock the vault, then add an account.</p></div>
 <div class="row" style="margin-top:10px"><button class="p" id="addBtn">Add account</button><button id="loginAll">Log in selected</button></div></section>
 <section><h2>Connection</h2>
@@ -108,15 +118,15 @@ async function place(a,side){
  const jd={am:"NO",dq:"0",es:$("seg").value,mp:"0",pc:$("prod").value,pf:"N",pr:mkt?"0":String($("price").value||"0"),
   pt:$("pt").value,os:"NEOTRADEAPI",qt:String($("qty").value),rt:"DAY",tp:String($("trig").value||"0"),ts:$("sym").value.trim(),tt:side};
  if($("dry").checked)return {dryRun:true,jData:jd};
- const s=sess[a.id];return call(s.baseUrl+"/quick/order/rule/ms/place?sId="+encodeURIComponent(s.serverId),{method:"POST",headers:authH(s,true),body:"jData="+encodeURIComponent(JSON.stringify(jd))});}
+ const s=sess[a.id];return withReq(jd,call(s.baseUrl+"/quick/order/rule/ms/place?sId="+encodeURIComponent(s.serverId),{method:"POST",headers:authH(s,true),body:"jData="+encodeURIComponent(JSON.stringify(jd))}));}
 async function fetchData(a,kind){const s=sess[a.id];
  const path=kind==="ob"?"/quick/user/orders":"/quick/user/positions";
  return call(s.baseUrl+path+"?sId="+encodeURIComponent(s.serverId),{method:"GET",headers:authH(s,false)});}
 
 /* ---------- UI ---------- */
 const picked=()=>accounts.filter(a=>$("c_"+a.id)?.checked);
-function render(){ $("unlockBtn").textContent=vaultKey?"Vault unlocked":"Unlock vault";
- $("accts").innerHTML=accounts.length?accounts.map(a=>`<div class="acct"><input type="checkbox" id="c_${a.id}" aria-label="Select ${esc(a.label)}"><span class="dot ${sess[a.id]?"on":""}"></span><span class="n">${esc(a.label)} <small style="color:var(--mute)">${esc(a.ucc)}</small></span><button data-lg="${a.id}">Log in</button><button data-rm="${a.id}">Remove</button></div>`).join(""):'<p style="color:var(--mute)">No accounts yet.</p>';}
+function render(){ const keep=new Set(picked().map(a=>a.id)); $("unlockBtn").textContent=vaultKey?"Vault unlocked":"Unlock vault";
+ $("accts").innerHTML=accounts.length?accounts.map(a=>`<div class="acct"><input type="checkbox" id="c_${a.id}" ${keep.has(a.id)?"checked":""} aria-label="Select ${esc(a.label)}"><span class="dot ${sess[a.id]?"on":""}"></span><span class="n">${esc(a.label)} <small style="color:var(--mute)">${esc(a.ucc)}</small></span><button data-lg="${a.id}">Log in</button><button data-rm="${a.id}">Remove</button></div>`).join(""):'<p style="color:var(--mute)">No accounts yet.</p>';syncAll();}
 function ask(html){return new Promise(res=>{$("dform").innerHTML=html+'<div class="row" style="margin-top:12px;flex-direction:row-reverse"><button class="p" value="ok">OK</button><button value="cancel" formnovalidate>Cancel</button></div>';
  $("dlg").onclose=()=>res($("dlg").returnValue==="ok");$("dlg").showModal();});}
 $("unlockBtn").onclick=async()=>{ if(vaultKey)return;
@@ -132,18 +142,46 @@ $("accts").onclick=async e=>{const lg=e.target.dataset.lg,rm=e.target.dataset.rm
 $("loginAll").onclick=async()=>{for(const a of picked()){try{await login(a)}catch(err){alert(a.label+": "+err.message)}}render();};
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 const row=o=>`<details open><summary class="${o.ok?"ok":"err"}">${esc(o.a.label)}: ${o.ok?"ok":"failed"}</summary><pre>${esc(typeof o.r==="string"?o.r:JSON.stringify(o.r,null,1))}</pre></details>`;
-async function fan(fn,target,delayMs=0){const sel=picked();if(!sel.length)return alert("Tick at least one account.");
+async function fan(fn,target,delayMs=0,rd=row){const sel=picked();if(!sel.length)return alert("Tick at least one account.");
  const run=async a=>{try{if(!sess[a.id]&&!$("dry").checked)throw new Error("not logged in");return {a,ok:true,r:await fn(a)}}catch(e){return {a,ok:false,r:e.message}}};
- if(!delayMs){target.innerHTML=(await Promise.all(sel.map(run))).map(row).join("");return;}
+ if(!delayMs){target.innerHTML=(await Promise.all(sel.map(run))).map(rd).join("");return;}
  target.innerHTML="";   // sequential: one account at a time, delayMs apart
- for(let k=0;k<sel.length;k++){if(k)await sleep(delayMs);target.insertAdjacentHTML("beforeend",row(await run(sel[k])));}}
+ for(let k=0;k<sel.length;k++){if(k)await sleep(delayMs);target.insertAdjacentHTML("beforeend",rd(await run(sel[k])));}}
+const withReq=async(jd,p)=>({...await p,_req:jd});
+function syncAll(){const c=[...document.querySelectorAll('#accts input[type=checkbox]')],n=c.filter(x=>x.checked).length;$("all").checked=c.length>0&&n===c.length;$("all").indeterminate=n>0&&n<c.length;}
+$("all").onchange=()=>{document.querySelectorAll('#accts input[type=checkbox]').forEach(c=>c.checked=$("all").checked);syncAll();};
+$("accts").addEventListener("change",syncAll);
+const num=x=>Number(x)||0,inr=x=>num(x).toLocaleString("en-IN",{minimumFractionDigits:2,maximumFractionDigits:2});
+const errMsg=r=>{if(r&&typeof r==="object")return r.emsg||r.errMsg||r.message||r.Error||JSON.stringify(r);const t=String(r),k=t.indexOf("{");try{const j=JSON.parse(t.slice(k));return j.emsg||j.errMsg||j.message||t}catch{return t}};
+const raw=o=>`<details><summary>Raw response</summary><pre>${esc(typeof o.r==="string"?o.r:JSON.stringify(o.r,null,1))}</pre></details>`;
+const card=(o,st,title,sub,extra="")=>`<div class="oc ${st}"><div class="oh"><b>${esc(o.a.label)}</b><span class="pill ${st}">${esc(title)}</span></div><div class="os">${sub}</div>${extra}</div>`;
+function orderCard(o){const r=o.r,d=o.ok&&typeof r==="object"?(r.jData||r._req):null;
+ const desc=d?`<span class="side ${d.tt==="B"?"b":"s"}">${d.tt==="B"?"BUY":"SELL"}</span> ${esc(d.qt)} × ${esc(d.ts)} · ${esc(d.pc)} · ${d.pt==="MKT"||d.pt==="SL-M"?"Market":"₹"+esc(d.pr)}`:"";
+ if(!o.ok)return card(o,"bad","Failed",esc(errMsg(r)));
+ if(r.dryRun)return card(o,"dry","Dry run",desc+"<br>Nothing was sent.");
+ if(r.stat==="Ok"||r.nOrdNo)return card(o,"good","Order placed",desc+`<br>Order no. <b>${esc(r.nOrdNo||"-")}</b>`,raw(o));
+ return card(o,"bad","Rejected",esc(errMsg(r)),raw(o));}
+const rows=o=>Array.isArray(o.r&&o.r.data)?o.r.data:[];
+function posCard(o){if(!o.ok)return card(o,"bad","Failed",esc(errMsg(o.r)));
+ const L=rows(o).map(p=>{const bq=num(p.flBuyQty)+num(p.cfBuyQty),sq=num(p.flSellQty)+num(p.cfSellQty),ba=num(p.buyAmt)+num(p.cfBuyAmt),sa=num(p.sellAmt)+num(p.cfSellAmt),net=bq-sq;
+  return {sym:p.trdSym||p.sym||"-",prod:p.prod||"",bq,sq,net,ab:bq?ba/bq:0,as:sq?sa/sq:0,pl:net===0?sa-ba:null};});
+ if(!L.length)return card(o,"dry","No positions","Nothing open or traded today.",raw(o));
+ const open=L.filter(x=>x.net!==0).length,pl=L.reduce((t,x)=>t+(x.pl||0),0),cl=v=>v>0?"up":v<0?"dn":"";
+ const t=`<div class="kp"><div>Open<b>${open}</b></div><div>Closed<b>${L.length-open}</b></div><div>Booked P&amp;L<b class="${cl(pl)}">₹${inr(pl)}</b></div></div><div class="tw"><table><tr><th>Symbol</th><th>Prod</th><th class="n">Buy</th><th class="n">Avg</th><th class="n">Sell</th><th class="n">Avg</th><th class="n">Net</th><th class="n">Booked P&amp;L</th></tr>`+
+  L.map(x=>`<tr><td><b>${esc(x.sym)}</b></td><td>${esc(x.prod)}</td><td class="n">${x.bq}</td><td class="n">${inr(x.ab)}</td><td class="n">${x.sq}</td><td class="n">${inr(x.as)}</td><td class="n ${cl(x.net)}">${x.net}</td><td class="n ${x.pl==null?"":cl(x.pl)}">${x.pl==null?"open":inr(x.pl)}</td></tr>`).join("")+"</table></div>";
+ return card(o,"good",L.length+" positions","Booked P&amp;L covers fully closed positions only; open ones need live prices.",t+raw(o));}
+function obCard(o){if(!o.ok)return card(o,"bad","Failed",esc(errMsg(o.r)));const L=rows(o);
+ if(!L.length)return card(o,"dry","No orders","No orders today.",raw(o));
+ const pc=s=>/complete|traded/i.test(s)?"good":/reject|cancel/i.test(s)?"bad":"dry";
+ const t='<div class="tw"><table><tr><th>Symbol</th><th>Side</th><th class="n">Qty</th><th class="n">Price</th><th>Type</th><th>Status</th></tr>'+L.map(x=>`<tr><td><b>${esc(x.trdSym||x.sym||"-")}</b></td><td class="side ${x.trnsTp==="B"?"b":"s"}">${x.trnsTp==="B"?"BUY":"SELL"}</td><td class="n">${esc(x.qty??"")}</td><td class="n">${inr(x.prc)}</td><td>${esc(x.prcTp||"")}</td><td><span class="pill ${pc(x.ordSt||"")}" title="${esc(x.rejRsn||"")}">${esc(x.ordSt||"-")}</span></td></tr>`).join("")+"</table></div>";
+ return card(o,"good",L.length+" orders","",t+raw(o));}
 async function send(side){
  if(!$("sym").value.trim()||!($("qty").value>0))return alert("Enter symbol and quantity.");
  const n=picked().length;if(!n)return alert("Tick at least one account.");
  if(!$("dry").checked&&!confirm(`LIVE: ${side==="B"?"BUY":"SELL"} ${$("qty").value} ${$("sym").value} on ${n} account(s)?`))return;
- fan(a=>place(a,side),$("log"),1000);}
+ fan(a=>place(a,side),$("log"),1000,orderCard);}
 $("buyBtn").onclick=()=>send("B");$("sellBtn").onclick=()=>send("S");
-$("obBtn").onclick=()=>fan(a=>fetchData(a,"ob"),$("data"));$("posBtn").onclick=()=>fan(a=>fetchData(a,"pos"),$("data"));
+$("obBtn").onclick=()=>fan(a=>fetchData(a,"ob"),$("data"),0,obCard);$("posBtn").onclick=()=>fan(a=>fetchData(a,"pos"),$("data"),0,posCard);
 for(const k of["proxy","host","fin"]){if(localStorage["s_"+k])$(k).value=localStorage["s_"+k];$(k).onchange=()=>localStorage["s_"+k]=$(k).value;}
 $("testBtn").onclick=async()=>{const p=$("proxy").value.trim().replace(/\/$/,"");const o=$("testOut");
  if(!p){o.textContent="Enter a Proxy URL first.";return;}o.textContent="Testing...";
