@@ -83,6 +83,7 @@ input,select{font-size:16px}
 <section class="c-data"><h2>Positions &amp; orders</h2>
 <div class="row" style="margin-bottom:10px"><button id="obBtn">Load order books</button><button id="posBtn">Load positions</button></div><div id="data"></div></section>
 </div></main>
+<footer class="sub" style="text-align:center;padding:4px 16px 24px">Independent tool, not affiliated with Kotak Securities. Credentials stay encrypted in your browser only.</footer>
 <dialog id="dlg"><form method="dialog" id="dform"></form></dialog>
 <script>
 "use strict";
@@ -106,8 +107,8 @@ async function unlock(name,pass){profile=name.trim().toLowerCase();shown=name.tr
  else{accounts=[];   // migrate the old single vault if this password opens it
   if(localStorage.vault&&localStorage.vsalt){try{accounts=await openVault(0,localStorage.vault,await deriveKey(pass,unb64(localStorage.vsalt)));}catch{}}
   await saveVault();}
- render();}
-function lock(){vaultKey=null;accounts=[];sess={};profile=shown="";render();}
+ loadSettings();render();}
+function lock(){vaultKey=null;accounts=[];sess={};profile=shown="";loadSettings();render();}
 /* ---------- TOTP (RFC 6238) via WebCrypto ---------- */
 function b32(s){const A="ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";let bits="";for(const c of s.replace(/[\s=]/g,"").toUpperCase())bits+=A.indexOf(c).toString(2).padStart(5,"0");
  return Uint8Array.from(bits.match(/.{8}/g).map(x=>parseInt(x,2)));}
@@ -147,6 +148,7 @@ function render(){ const keep=new Set(picked().map(a=>a.id)); $("unlockBtn").tex
 function ask(html){return new Promise(res=>{$("dform").innerHTML=html+'<div class="row" style="margin-top:12px;flex-direction:row-reverse"><button class="p" value="ok">OK</button><button value="cancel" formnovalidate>Cancel</button></div>';
  $("dlg").onclose=()=>res($("dlg").returnValue==="ok");$("dlg").showModal();});}
 $("unlockBtn").onclick=async()=>{if(vaultKey)return lock();
+ if(!localStorage.accepted){if(!await ask('<h3>Before you start</h3><p class="sub">This is an independent tool, not affiliated with Kotak Securities. It gives no trading advice. You are responsible for every order and for following Kotak and SEBI API rules, including static IP whitelisting.</p><p class="sub">Your keys, MPIN and TOTP secrets are encrypted and stored only in this browser. They go to Kotak (or your own proxy) and nowhere else. Anyone using your device and password can trade.</p>'))return;localStorage.accepted="1";}
  if(!await ask(`<h3>Welcome</h3><p class="sub">Enter your profile name and password. A new name creates a new vault.</p><label>Name</label><input id="un" autocomplete="username" value="${esc(localStorage.lastName||"")}"><label>Password</label><input id="pp" type="password" autocomplete="current-password">`))return;
  const n=$("un").value.trim(),p=$("pp").value;if(!n||!p)return alert("Enter your name and password.");
  try{await unlock(n,p);localStorage.lastName=n;}catch(e){return alert(e.message)}
@@ -206,7 +208,9 @@ async function send(side){
  fan(a=>place(a,side),$("log"),1000,orderCard);}
 $("buyBtn").onclick=()=>send("B");$("sellBtn").onclick=()=>send("S");
 $("obBtn").onclick=()=>fan(a=>fetchData(a,"ob"),$("data"),0,obCard);$("posBtn").onclick=()=>fan(a=>fetchData(a,"pos"),$("data"),0,posCard);
-for(const k of["proxy","host","fin"]){if(localStorage["s_"+k])$(k).value=localStorage["s_"+k];$(k).onchange=()=>localStorage["s_"+k]=$(k).value;}
+const defs={proxy:"",host:"https://mis.kotaksecurities.com",fin:""};
+const loadSettings=()=>{for(const k in defs)$(k).value=localStorage["s_"+profile+"_"+k]??defs[k]};
+for(const k in defs)$(k).onchange=()=>{if(profile)localStorage["s_"+profile+"_"+k]=$(k).value};
 $("testBtn").onclick=async()=>{const p=$("proxy").value.trim().replace(/\/$/,"");const o=$("testOut");
  if(!p){o.textContent="Enter a Proxy URL first.";return;}o.textContent="Testing...";
  try{const r=await fetch(p+"/health");const j=await r.json();o.className="ok";o.textContent="Works. Whitelist this IP in Kotak: "+j.ip;}
